@@ -9,7 +9,6 @@ import (
 )
 
 // URL returns the original fully qualified request URL made by the client before any intermediate proxies.
-// Assumes that Caddy has already sanitized any X-Forwarded-* headers.
 func URL(r *http.Request) *url.URL {
 	var u = new(url.URL)
 
@@ -21,10 +20,6 @@ func URL(r *http.Request) *url.URL {
 	}
 
 	u.Host = r.Host
-	if forwardedHost := r.Header.Get("X-Forwarded-Host"); forwardedHost != "" {
-		u.Host = forwardedHost
-	}
-
 	return u
 }
 

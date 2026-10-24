@@ -397,6 +397,7 @@ func (au *SessionCookieAuthenticator) GetAbsRedirectURI(r *http.Request) *url.UR
 }
 
 func (au *SessionCookieAuthenticator) signRelayURL(u string) string {
+	// TODO: Use a different secret for this?
 	mac := hmac.New(sha256.New, []byte(au.Secret))
 	_, _ = mac.Write([]byte(u))
 	return base64.RawURLEncoding.EncodeToString(mac.Sum(nil))

@@ -1,5 +1,11 @@
 # Caddy OIDC
 
+This is a fork of Caddy OIDC for SIPB's [Hyades project](https://hyades.mit.edu) to add support for callback redirects. Basically we need to support OIDC for arbitrary *.sipb.cloud (and custom domains), but Petrock uses [SATOSA](https://github.com/IdentityPython/SATOSA) which doesn't support wildcard redirect URLs. So, the solution is to use https://auth.sipb.cloud/oauth2/callback as the redirect URL and stash the actual target URL. Then when the user gets redirected to auth.sipb.cloud they get redirected a second time to their actual target. This is a bit tricky to implement because we want the cookie to only get scoped to the target subdomain and not sipb.cloud. Additionally we need to prevent auth.sipb.cloud from redirecting to arbitrary attacker-controlled domains, so they're signed by caddy-oidc's `COOKIE_SECRET`.
+
+Note that catchall blocks (i.e. `:443` instead of a particular domain) break the security of this plugin since an attacker can set the `Host` header to make this plugin sign a redirect to an arbitrary domain. Additionally, this plugin removes support for `X-Forwarded-Host` (when Caddy is behind another reverse proxy) because it can also be abused to sign malicious redirects.
+
+Original README:
+
 A Caddy plugin for OIDC authentication and authorization.
 
 Inspired by [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy) but instead of requiring each application to be
